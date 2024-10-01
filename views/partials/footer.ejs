@@ -1,0 +1,62 @@
+<!-- views/partials/footer.ejs -->
+</main>
+<footer class="site-footer">
+    <p>&copy; 2024 UmutHub. Все права защищены.</p>
+</footer>
+
+<!-- Общие скрипты -->
+<script src="/js/admin.js"></script>
+
+<!-- Скрипт для списка школ -->
+<script>
+(function() {
+    console.log('Schools list script loaded');
+
+    function deleteSchool(schoolId) {
+        if (confirm('Вы уверены, что хотите удалить эту школу?')) {
+            fetch(`/admin/schools/${schoolId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-school-id="${schoolId}"]`);
+                    if (row) {
+                        row.remove();
+                        console.log('School row removed');
+                    } else {
+                        console.error('Row not found');
+                    }
+                    alert('Школа успешно удалена');
+                } else {
+                    alert(data.message || 'Ошибка при удалении школы');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при удалении школы');
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        console.log('DOM fully loaded and parsed');
+        
+        // Делегирование события для кнопок удаления
+        document.body.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('btn-delete')) {
+                e.preventDefault();
+                const schoolId = e.target.getAttribute('data-school-id');
+                if (schoolId) {
+                    deleteSchool(schoolId);
+                }
+            }
+        });
+    });
+})();
+</script>
+</body>
+</html>

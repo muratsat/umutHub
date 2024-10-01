@@ -1,0 +1,74 @@
+<body>
+    <div class="container">
+        <h1>Список школ</h1>
+        
+        <form class="search-form" action="/admin/schools" method="GET">
+            <input type="text" name="search" value="<%= locals.searchQuery || '' %>" placeholder="Поиск школ...">
+            <button type="submit" class="btn btn-search">Поиск</button>
+        </form>
+
+        <% if (locals.schools && schools.length > 0) { %>
+            <table class="schools-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="id">
+                            <div class="th-content">
+                                ID <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="name">
+                            <div class="th-content">
+                                Название <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="description">
+                            <div class="th-content">
+                                Описание <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="studentCount">
+                            <div class="th-content">
+                                Ученики <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="teacherCount">
+                            <div class="th-content">
+                                Админы <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% schools.forEach((school, index) => { %>
+                        <tr data-school-id="<%= school._id %>">
+                            <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                            <td><a href="/admin/schools/<%= school._id %>"><%= school.name %></a></td>
+                            <td><%= school.description || 'Описание отсутствует' %></td>
+                            <td><%= school.studentCount %></td>
+                            <td><%= school.teacherCount %></td>
+                            <td>
+                                <a href="/admin/schools/<%= school._id %>/edit" class="btn btn-edit" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-delete" data-school-id="<%= school._id %>" title="Удалить">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>   
+            
+            <div class="pagination" 
+         data-current-page="<%= currentPage %>" 
+         data-total-pages="<%= totalPages %>">
+        <!-- Содержимое будет динамически обновляться с помощью JavaScript -->
+    </div>
+    
+    <p class="total-schools">Всего школ: <%= totalSchools %></p>
+<% } else { %>
+    <p class="no-schools">Школы не найдены.</p>
+<% } %>
+    </div>
+</body>

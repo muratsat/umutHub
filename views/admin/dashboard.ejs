@@ -1,0 +1,27 @@
+<body>
+    
+    <main class="container">
+        <h1>Панель управления</h1>
+        
+        <section class="dashboard">
+            <div class="dashboard-card">
+                <h3>Всего школ</h3>
+                <div class="count"><%= schoolCount %></div>
+            </div>
+            <div class="dashboard-card">
+                <h3>Всего учеников</h3>
+                <div class="count"><%= studentCount %></div>
+            </div>
+            <div class="dashboard-card">
+                <h3>Всего администратора</h3>
+                <div class="count"><%= teacherCount %></div>
+            </div>
+        </section>
+
+        <section class="dashboard-actions">
+            <a href="/admin/schools" class="dashboard-action">Управление школами</a>
+            <a href="/admin/users" class="dashboard-action">Управление пользователями</a>
+            <a href="/admin/reports" class="dashboard-action">Отчеты</a>
+        </section>
+    </main>
+</body>

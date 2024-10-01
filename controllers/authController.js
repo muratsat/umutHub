@@ -1,45 +1,91 @@
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
-const User = require("../models/User");
+const User = require("../models/user.model");
+const MyClass = require("../models/class.model");
 const authMiddleware = require("../middlewares/authMiddleware");
-
+const mongoose=require('mongoose');
 const { sendOTPByEmail } = require("../middlewares/emailOtpMiddleware");
 const otpGenerator  = require("../utils/otpGenerator");
 
 //User Registration
 exports.registerUser = async (req, res) => {
-  const{ username, email, password } = req.body;
+  // const{email, password } = req.body;
+  const{email } = req.body;
+
   try {
     //check if user exists
-    const existingUser = await User.findOne({$or: [{username}, {email}]});
-    if (existingUser) {
-      return res.status(400).json({message: "Username or Email already exists"});
-    }
+    // const existingUser = await User.findOne({$or: [{email}]});
+    // if (existingUser) {
+    //   return res.status(400).json({message: "Username or Email already exists"});
+    // }
 
+    const user = await User.findOne({ email });
+    //console.log(user);
+    
     // Generate OTP
     const otp = otpGenerator.generateOTP();
+
+    
+    
+    //hash password
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    //new user object
+    if (!user) {
+      const newUser = new User({
+        email,
+        // password: hashedPassword,
+        otp
+      });
+  
+      //save
+      await newUser.save();
+    }
+
+    user.otp = otp;
+    await user.save();
 
     // Send OTP via Email
     sendOTPByEmail(email, otp);
     
-    //hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    //new user object
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      otp
-    });
-
-    //save
-    await newUser.save();
-    res.status(201).json({message: "User registered successfully, OTP sent to email"});   
+    res.status(201).json({message: "Successfully, OTP sent to email"});   
   } catch (error) {
     console.error(error);
     res.status(500).json({message: "Server Error"});
   }
 };
+
+
+exports.registerDetail = async (req, res) => {
+  const{name, surname, classId } = req.body;
+  try {
+
+    if(!name || !surname || !classId){
+      return res.status(404).json({message: "Убедитесь что все поля заполнены"});
+    }
+
+    
+    var _id = new mongoose.Types.ObjectId(classId);
+
+    const myClass = await MyClass.findById({_id})
+    if(!myClass){
+      return res.status(404).json({message: "Класс не найден"});
+    }
+    //new user object
+    const user = req.user;
+
+    user.name=name;
+    user.surname=surname;
+    user.classId=classId;
+
+    //save
+    await user.save();
+    res.status(201).json({message: "Pupil registered successfully"});   
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: "Server Error"});
+  }
+};
+
 
 //Login User
 exports.loginUser = async (req, res) => {

@@ -1,0 +1,40 @@
+<h1>Управление пользователями</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Роль</th>
+            <th>Школа</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% schoolAdmins.forEach(user => { %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.role === 1 ? 'Школьный админ' : 'Пользователь' %></td>
+                <td><%= user.schoolId ? user.schoolId.name : 'Не назначена' %></td>
+                <td>
+                    <a href="/admin/edit-user/<%= user._id %>" class="btn">Редактировать</a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<h2>Создать/Обновить школьного администратора</h2>
+<form action="/admin/create-school-admin" method="POST">
+    <input type="text" name="name" placeholder="Имя" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Пароль">
+    <select name="schoolId" required>
+        <option value="">Выберите школу</option>
+        <% schools.forEach(school => { %>
+            <option value="<%= school._id %>"><%= school.name %></option>
+        <% }) %>
+    </select>
+    <button type="submit">Сохранить</button>
+</form>

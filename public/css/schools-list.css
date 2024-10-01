@@ -1,0 +1,214 @@
+/* public/css/schools-list.css */
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    margin-bottom: 20px;
+    display: flex;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-form input[type="text"] {
+    flex-grow: 1;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #909c3c;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.btn-search {
+    padding: 10px 20px;
+    background-color: #909c3c;
+    color: white;
+    border: 2px solid #909c3c;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+    background-color: #7a843c;
+    border-color: #7a843c;
+}
+
+.schools-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.schools-table th,
+.schools-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.schools-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.schools-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.schools-table a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+.schools-table a:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btn-edit {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+.btn-edit:hover {
+    background-color: #ec971f;
+    border-color: #d58512;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination .btn {
+    margin: 0 5px;
+}
+
+.page-info {
+    margin: 0 10px;
+}
+
+.total-schools {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.no-schools {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .schools-table {
+        font-size: 14px;
+    }
+
+    .schools-table th,
+    .schools-table td {
+        padding: 8px;
+    }
+
+    .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+.schools-table th.sortable {
+    padding: 0; /* Убираем внутренний отступ от th */
+}
+
+.schools-table th.sortable .th-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px; /* Добавляем отступ к внутреннему контейнеру */
+    cursor: pointer;
+    user-select: none;
+}
+
+.schools-table th.sortable:hover .th-content {
+    background-color: #7a843c;
+    color: white;
+}
+
+.sort-icon {
+    margin-left: 5px;
+}
+
+th.asc .sort-icon::after {
+    content: '▼';
+}
+
+th.desc .sort-icon::after {
+    content: '▲';
+}
+
+
+.btn-edit, .btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin: 0 5px;
+    transition: opacity 0.3s;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    opacity: 0.7;
+}
+
+.btn-edit i, .btn-delete i {
+    font-size: 18px;
+}
+
+.btn-edit i {
+    color: #4CAF50; /* Зеленый цвет для кнопки редактирования */
+}
+
+.btn-delete i {
+    color: #F44336; /* Красный цвет для кнопки удаления */
+}

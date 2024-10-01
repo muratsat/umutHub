@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Admin Panel</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/school-admins">School Admins</a></li>
+                <li><a href="/admin/create-school-admin">Create School Admin</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <%- body %>
+        </main>
+    </div>
+
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/admin.js"></script>
+    <script src="/js/schools-list.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
-const User = require("../models/User");
+const User = require("../models/user.model");
 const { compareOTP } = require("../utils/otpGenerator");
 
 const router = express.Router();
@@ -52,9 +52,9 @@ router.post("/login", async (req, res) => {
       user.otp = null; // Set the OTP field to null after verification
       await user.save();
 
-      const token = jwt.sign({userId: user._id}, 'secret', {expiresIn: '1h'});
+      const token = jwt.sign({userId: user._id}, 'secret', {expiresIn: '1d'});
 
-    return res.status(200).json({token, user: {username: user.username, email: user.email}});
+    return res.status(200).json({token});
     } else {
       return res.status(401).json({ message: "Invalid OTP" });
     }

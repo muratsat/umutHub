@@ -1,0 +1,35 @@
+
+<body>
+    
+    <main class="container">
+        <h1>Редактирование школы</h1>
+        
+        <form action="/admin/schools/<%= school._id %>/edit" method="POST" class="edit-school-form">
+            <div class="form-group">
+                <label for="name">Название школы:</label>
+                <input type="text" id="name" name="name" value="<%= school.name %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4"><%= school.description %></textarea>
+            </div>
+            
+            <div class="school-stats">
+                <p>Количество учеников: <%= studentCount %></p>
+                <p>Количество учителей: <%= teacherCount %></p>
+            </div>
+            
+            <h2>Классы:</h2>
+            <ul class="classes-list">
+                <% classes.forEach(classItem => { %>
+                    <li><%= classItem.name %></li>
+                <% }) %>
+            </ul>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a href="/admin/schools" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </main>

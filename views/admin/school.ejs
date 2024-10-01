@@ -1,0 +1,38 @@
+<div class="school-container"></div>
+    <h1><%= school.name %></h1>
+    <p><strong>Адрес:</strong> <%= school.address %></p>
+    
+    <div class="school-stats">
+        <div class="stat-card">
+            <h3>Ученики</h3>
+            <p><%= studentCount %></p>
+        </div>
+        <div class="stat-card">
+            <h3>Администраторы</h3>
+            <p><%= teacherCount %></p>
+        </div>
+    </div>
+
+    <h2>Администраторы школы</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% schoolAdmins.forEach(admin => { %>
+                <tr>
+                    <td><%= admin.name %></td>
+                    <td><%= admin.email %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="/admin/schools/<%= school._id %>/edit" class="btn">Редактировать информацию</a>
+        <a href="/admin/schools/<%= school._id %>/classes" class="btn">Управление классами</a>
+    </div>
+</div>

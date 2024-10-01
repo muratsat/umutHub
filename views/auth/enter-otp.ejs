@@ -1,0 +1,12 @@
+
+    <div class="auth-container">
+        <h1>Введите OTP</h1>
+        <% if (locals.error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <form action="/admin/enter-otp" method="POST">
+            <input type="hidden" name="email" value="<%= email %>">
+            <input type="text" name="otp" placeholder="Введите OTP код" required autofocus>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
