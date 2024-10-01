@@ -9,9 +9,6 @@ const transporter = nodemailer.createTransport({
     user: "2104.01038@manas.edu.kg",
     pass: "ocab qghn sffk vrju",
   },
-  tls: {
-    rejectUnauthorized: false
-  },
   secure: true
 });
 
