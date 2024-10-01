@@ -98,32 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Обработка формы редактирования школы
-    const editForm = document.querySelector('.edit-school-form');
-    if (editForm) {
-        editForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const schoolId = this.dataset.schoolId;
-
-            fetch(`/admin/schools/${schoolId}`, {
-                method: 'PUT',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Школа успешно обновлена');
-                    window.location.href = '/admin/schools';
-                } else {
-                    alert(data.message || 'Ошибка при обновлении школы');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Произошла ошибка при обновлении школы');
-            });
-        });
-    }
+    
 
     function updatePagination() {
         const paginationContainer = document.querySelector('.pagination');
