@@ -8,12 +8,11 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: "2104.01038@manas.edu.kg",
     pass: "ocab qghn sffk vrju",
-  },
-  secure: true,
+  }
 });
 
 //Send OTP via Email
-exports.sendOTPByEmail = (email, otp) => {
+exports.sendOTPByEmail = async (email, otp) => {
   const mailOptions = {
     from: '"ProSoft" <' + process.env.email + '>',
     to: email,

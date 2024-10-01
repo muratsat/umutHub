@@ -22,7 +22,7 @@ exports.postLogin = async (req, res) => {
         await user.save();
 
         // Отправка OTP по email
-        sendOTPByEmail(email, otp);
+        await sendOTPByEmail(email, otp);
 
             req.session.userEmail = email;
             req.session.save();
