@@ -11,7 +11,8 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false
-}
+  },
+  secure: true
 });
 
 //Send OTP via Email
