@@ -3,3 +3,4 @@ node_modules
 replit.nix
 .upm
 .config
+.env
