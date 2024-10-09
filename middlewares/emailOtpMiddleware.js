@@ -3,13 +3,13 @@ const nodemailer = require("nodemailer");
 //Nodemailer
 //transporter configuration
 const transporter = nodemailer.createTransport({
-  port: 465,
   host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: "2104.01038@manas.edu.kg",
-    pass: "ocab qghn sffk vrju",
+    pass: "dulg ezgq vdpl pkrk",
   },
-  secure: true
 });
 
 //Send OTP via Email

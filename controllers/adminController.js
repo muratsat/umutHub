@@ -1,16 +1,17 @@
 const User = require('../models/user.model');
 const School = require('../models/school.model');
+const Class = require('../models/class.model');
 const AdminLog = require('../models/adminLog.model');
 
 exports.getDashboard = async (req, res) => {
   try {
     const schoolCount = await School.countDocuments();
-    const studentCount = await User.countDocuments({ role: 0 });
+    const classCount = await Class.countDocuments();
     const teacherCount = await User.countDocuments({ role: 1 });
 
     res.render('admin/dashboard', {
       schoolCount,
-      studentCount,
+      classCount,
       teacherCount,
     });
   } catch (error) {

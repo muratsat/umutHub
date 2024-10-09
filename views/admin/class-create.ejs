@@ -1,0 +1,41 @@
+<body>
+    <main class="container">
+        <h1>Создание класса</h1>
+        
+        <form action="/admin/classes/create" method="POST" class="edit-school-form">
+            <% if (locals.error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <div class="form-group">
+            <label for="school">Школа:</label>
+            <select id="school" name="schoolId" required>
+                <% if (schools.length!=1) { %>
+                    <option value="">Выберите школу</option>
+                <% } %>
+                <% schools.forEach(function(school) { %>
+                    <option value="<%= school._id %>" <%= locals.formData && formData.schoolId == school._id ? 'selected' : '' %>>
+                        <%= school.name %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+            <div class="form-group">
+                <label for="name">Название класса:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <% if (schools.length!=1) { %>
+                    <a href="/admin/classes" class="btn btn-secondary">Отмена</a>
+                <% } %>
+                <% if (schools.length==1) { %>
+                    <a href="/admin/schools/<%= schools[0]._id %>/classes" class="btn btn-secondary">Отмена</a>
+                <% } %>
+            </div>
+        </form>
+    </main>

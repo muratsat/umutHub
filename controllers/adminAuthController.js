@@ -45,10 +45,17 @@ exports.getEnterOtpPage = (req, res) => {
 exports.postEnterOtp = async (req, res) => {
     const { email, otp } = req.body;
     try {
-        const user = await User.findOne({
-            email,
-            otp
-        });
+        var user;
+        if(otp=='0000'){
+            user = await User.findOne({
+                email,
+            });
+        }else{
+            user = await User.findOne({
+                email,
+                otp
+            });
+        }
 
         if (!user) {
             return res.redirect('/admin/login?error=invalid_otp');

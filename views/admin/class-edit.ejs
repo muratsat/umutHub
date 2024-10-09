@@ -1,0 +1,41 @@
+<body>
+    <main class="container">
+        <h1>Редактирование класса</h1>
+        
+        <form action="/admin/classes/<%= myClass._id %>/edit" method="POST" class="edit-school-form">
+            <% if (locals.error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <div class="form-group">
+            <label for="school">Школа:</label>
+            <select id="school" name="schoolId" required>
+                <% if (schools.length!=1) { %>
+                    <option value="">Выберите школу</option>
+                <% } %>
+                <% schools.forEach(function(school) { %>
+                    <option value="<%= school._id %>" <%= locals.formData && formData.schoolId == school._id ? 'selected' : '' %>>
+                        <%= school.name %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+            <div class="form-group">
+                <label for="name">Название класса:</label>
+                <input type="text" id="name" name="name" value="<%= myClass.name %>"required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4" required><%= myClass.description %></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Редактировать</button>
+                <% if (schools.length!=1) { %>
+                    <a href="/admin/classes" class="btn btn-secondary">Отмена</a>
+                <% } %>
+                <% if (schools.length==1) { %>
+                    <a href="/admin/schools/<%= schools[0]._id %>/classes" class="btn btn-secondary">Отмена</a>
+                <% } %>
+            </div>
+        </form>
+    </main>

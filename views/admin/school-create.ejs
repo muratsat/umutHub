@@ -1,0 +1,23 @@
+<body>
+    <main class="container">
+        <h1>Создание школы</h1>
+        
+        <form action="/admin/schools/create" method="POST" class="edit-school-form">
+            <% if (locals.error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <div class="form-group">
+                <label for="name">Название школы:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <a href="/admin/schools" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </main>

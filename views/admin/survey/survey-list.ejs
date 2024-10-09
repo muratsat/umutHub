@@ -1,0 +1,67 @@
+<body>
+    <div class="container">
+        <h1>Опросы</h1>
+        
+        <form class="search-form" action="/admin/pupils" method="GET">
+            <input type="text" name="search" value="<%= locals.searchQuery || '' %>" placeholder="Поиск опросов...">
+            <button type="submit" class="btn btn-search">Поиск</button>
+        </form>
+        <% if (locals.surveys && surveys.length > 0) { %>
+            <table class="schools-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="id">
+                            <div class="th-content">
+                                ID <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="name">
+                            <div class="th-content">
+                                Название <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="school">
+                            <div class="th-content">
+                                Школа <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="school">
+                            <div class="th-content">
+                                Ответили <span class="sort-icon">&#x25B2;</span>
+                            </div>
+                        </th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% surveys.forEach((surveyItem, index) => { %>
+                        <tr data-pupil-id="<%= surveyItem._id %>">
+                            <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                            <td><%= surveyItem.name %></td>
+                            <td><%= surveyItem.schoolName %></td>
+                            <td><%= surveyItem.surveyResCount %></td>
+                            <td>
+                                <a href="/admin/surveys/<%= surveyItem._id %>/edit" class="btn btn-edit" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-deleteSurvey" data-pupil-id="<%= surveyItem._id %>" title="Удалить">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>   
+            
+            <div class="pagination" 
+                 data-current-page="<%= currentPage %>" 
+                 data-total-pages="<%= totalPages %>">
+                <!-- Содержимое будет динамически обновляться с помощью JavaScript -->
+            </div>
+            
+            <p class="total-classes">Всего опросов: <%= totalSurveys %></p>
+        <% } else { %>
+            <p class="no-classes">Опросы не найдены.</p>
+        <% } %>
+    </div>
+</body>

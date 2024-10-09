@@ -1,11 +1,15 @@
 <body>
     <div class="container">
         <h1>Список школ</h1>
-        
         <form class="search-form" action="/admin/schools" method="GET">
             <input type="text" name="search" value="<%= locals.searchQuery || '' %>" placeholder="Поиск школ...">
             <button type="submit" class="btn btn-search">Поиск</button>
         </form>
+        <div class="actions-container">
+            
+            
+            <a href="/admin/schools/create" class="btn btn-create">Создать школу</a>
+        </div>
 
         <% if (locals.schools && schools.length > 0) { %>
             <table class="schools-table">
@@ -23,7 +27,7 @@
                         </th>
                         <th class="sortable" data-sort="description">
                             <div class="th-content">
-                                Описание <span class="sort-icon">&#x25B2;</span>
+                                Классы <span class="sort-icon">&#x25B2;</span>
                             </div>
                         </th>
                         <th class="sortable" data-sort="studentCount">
@@ -44,7 +48,8 @@
                         <tr data-school-id="<%= school._id %>">
                             <td><%= (currentPage - 1) * limit + index + 1 %></td>
                             <td><a href="/admin/schools/<%= school._id %>"><%= school.name %></a></td>
-                            <td><%= school.description || 'Описание отсутствует' %></td>
+                            <!-- <td><%= school.description || 'Описание отсутствует' %></td> -->
+                            <td><%= school.classCount %></td>
                             <td><%= school.studentCount %></td>
                             <td><%= school.teacherCount %></td>
                             <td>

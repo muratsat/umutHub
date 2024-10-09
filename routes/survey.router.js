@@ -88,7 +88,7 @@ router.post('/edit', authMiddleware.isAdmin, async (req, res) => {
   });
 
 // Получение списка всех опросов
-router.get('/getSurvey', async (req, res) => {
+router.get('/getSurvey',authMiddleware.auth, async (req, res) => {
   try {
     const surveys = await Survey.find().sort({ createdAt: -1 });
     res.json(surveys);

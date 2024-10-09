@@ -1,0 +1,43 @@
+<body>
+    <div class="container">
+        <h1><%= classItem.name %></h1>
+            <p><strong>Школа:</strong> <%= classItem.schoolId?.name || 'Нету школы' %></p>
+        <p><strong>Описание:</strong> <%= classItem.description || 'Описание отсутствует' %></p>
+        <h1></h1>
+        <div class="class-stats">
+            <div class="stat-card">
+                <h3>Ученики</h3>
+                <p><%= studentCount %></p>
+            </div>
+        </div>
+        <h1></h1>
+        <% if(students.length!=0){ %>
+            
+        <h2>Список учеников</h2>
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Баллы</th>
+                </tr>
+            </thead>
+            <%  } %>
+            <tbody>
+                <% students.forEach(student => { %>
+                    <tr>
+                        <td><%= `${student.surname} ${student.name}` %></td>
+                        <td><%= student.email %></td>
+                        <td><%= student.rating %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <h1></h1>
+
+        <div class="actions">
+            <a href="/admin/classes/<%= classItem._id %>/edit" class="btn btn-primary">Редактировать класс</a>
+            <a href="/admin/classes/<%= classItem._id %>/add-student" class="btn btn-secondary">Добавить ученика</a>
+        </div>
+    </div>
+</body>

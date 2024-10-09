@@ -1,0 +1,44 @@
+<body></body>
+    <main class="container">
+        <h1>Редактирование админа</h1>
+        
+        <form action="/admin/<%= admin._id %>/edit" method="POST" class="edit-school-form">
+            <% if (locals.error) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <div class="form-group">
+            <label for="school">Школа:</label>
+            <select id="school" name="schoolId" required>
+                <% if (schools.length!=1) { %>
+                    <option value="">Выберите школу</option>
+                <% } %>
+                <% schools.forEach(function(school) { %>
+                    <option value="<%= school._id %>" <%= locals.formData && formData.schoolId == school._id ? 'selected' : '' %>>
+                        <%= school.name %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+            <div class="form-group">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" value="<%= admin.name %>"required>
+            </div>
+            <div class="form-group">
+                <label for="name">Фамилия:</label>
+                <input type="text" id="surname" name="surname" value="<%= admin.surname %>"required>
+            </div>
+            <div class="form-group">
+                <label for="name">Email:</label>
+                <input type="text" id="email" name="email" value="<%= admin.email %>"required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Редактировать</button>
+                <% if (schools.length!=1) { %>
+                    <a href="/admin/list" class="btn btn-secondary">Отмена</a>
+                <% } %>
+                <% if (schools.length==1) { %>
+                    <a href="/admin/schools/<%= schools[0]._id %>/admins" class="btn btn-secondary">Отмена</a>
+                <% } %>
+            </div>
+        </form>
+    </main>

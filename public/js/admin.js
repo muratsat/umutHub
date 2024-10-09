@@ -66,6 +66,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.body.addEventListener('click', function(event) {
+        const deleteButton = event.target.closest('.btn-deleteClass');
+        if (deleteButton) {
+            event.preventDefault();
+            const classId = deleteButton.dataset.classId;
+            deleteClass(classId);
+        }
+    });
+
+    document.body.addEventListener('click', function(event) {
+        const deleteButton = event.target.closest('.btn-deleteAdmin');
+        if (deleteButton) {
+            event.preventDefault();
+            const adminId = deleteButton.dataset.adminId;
+            deleteAdmin(adminId);
+        }
+    });
+
+    document.body.addEventListener('click', function(event) {
+        const deleteButton = event.target.closest('.btn-deletePupil');
+        if (deleteButton) {
+            event.preventDefault();
+            const pupilId = deleteButton.dataset.pupilId;
+            deletePupil(pupilId);
+        }
+    });
+
     // Функция удаления школы
     function deleteSchool(schoolId) {
         if (confirm('Вы уверены, что хотите удалить эту школу?')) {
@@ -97,6 +124,99 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Функция удаления класса
+    function deleteClass(classId) {
+        if (confirm('Вы уверены, что хотите удалить этот класс?')) {
+            fetch(`/admin/classes/${classId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-class-id="${classId}"]`);
+                    if (row) {
+                        row.remove();
+                        console.log('Class row removed');
+                    } else {
+                        console.error('Class not found');
+                    }
+                    alert('Класс успешно удален');
+                } else {
+                    alert(data.message || 'Ошибка при удалении класса');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при удалении класса');
+            });
+        }
+    }
+
+    // Функция удаления админа
+    function deleteAdmin(adminId) {
+        if (confirm('Вы уверены, что хотите удалить админа?')) {
+            fetch(`/admin/${adminId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-admin-id="${adminId}"]`);
+                    if (row) {
+                        row.remove();
+                        console.log('Admin row removed');
+                    } else {
+                        console.error('Admin not found');
+                    }
+                    alert('Админ успешно удален');
+                } else {
+                    alert(data.message || 'Ошибка при удалении Админа');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при удалении Админа');
+            });
+        }
+    }
+
+
+    // Функция удаления ученика
+    function deletePupil(pupilId) {
+        if (confirm('Вы уверены, что хотите удалить этого ученика?')) {
+            fetch(`/admin/pupils/${pupilId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-pupil-id="${pupilId}"]`);
+                    if (row) {
+                        row.remove();
+                        console.log('Pupil row removed');
+                    } else {
+                        console.error('Pupil not found');
+                    }
+                    alert('Ученик успешно удален');
+                } else {
+                    alert(data.message || 'Ошибка при удалении ученика');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при удалении ученика');
+            });
+        }
+    }
     // Обработка формы редактирования школы
     
 

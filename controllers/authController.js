@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const User = require("../models/user.model");
 const MyClass = require("../models/class.model");
+const MySchool = require("../models/school.model");
 const authMiddleware = require("../middlewares/authMiddleware");
 const mongoose=require('mongoose');
 const { sendOTPByEmail } = require("../middlewares/emailOtpMiddleware");
@@ -40,10 +41,10 @@ exports.registerUser = async (req, res) => {
       //save
       await newUser.save();
     }
-
+    if (user) {
     user.otp = otp;
     await user.save();
-
+    }
     // Send OTP via Email
     sendOTPByEmail(email, otp);
     
@@ -56,30 +57,40 @@ exports.registerUser = async (req, res) => {
 
 
 exports.registerDetail = async (req, res) => {
-  const{name, surname, classId } = req.body;
+  const{name, surname, classId, schoolId } = req.body;
   try {
 
-    if(!name || !surname || !classId){
+    if(!name || !surname || !classId || !schoolId){
       return res.status(404).json({message: "Убедитесь что все поля заполнены"});
     }
 
+
+    var _id = new mongoose.Types.ObjectId(schoolId);
+
+    const mySchool = await MySchool.findById({_id})
+    if(!mySchool){
+      return res.status(404).json({message: "Школа не найдена"});
+    }
     
-    var _id = new mongoose.Types.ObjectId(classId);
+    _id = new mongoose.Types.ObjectId(classId);
 
     const myClass = await MyClass.findById({_id})
     if(!myClass){
       return res.status(404).json({message: "Класс не найден"});
     }
+
+    
     //new user object
     const user = req.user;
 
     user.name=name;
     user.surname=surname;
+    user.schoolId=schoolId;
     user.classId=classId;
 
     //save
     await user.save();
-    res.status(201).json({message: "Pupil registered successfully"});   
+    res.status(201).json({message: "Регистрация прошла успешно"});   
   } catch (error) {
     console.error(error);
     res.status(500).json({message: "Server Error"});
