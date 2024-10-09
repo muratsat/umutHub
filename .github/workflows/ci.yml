@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via ssh
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_KEY }}
+          script: |
+            cd ${{ secrets.PROD_DIR }}
+            git checkout master
+            git pull
+            export $(cat .env)
+            pm2 reload umutHub
