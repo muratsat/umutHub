@@ -35,7 +35,8 @@ exports.postLogin = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).render('auth/login', { error: 'Пользователь не найден' });
+            return res.status(400).render('auth/login', { error: 'Пользователь не найден', layout: path.join(__dirname, "../views/layouts/login"),
+                footer: true, });
         }
 
         // Генерация OTP
@@ -52,7 +53,8 @@ exports.postLogin = async (req, res) => {
 
         res.redirect('/admin/enter-otp');
     } catch (error) {
-        res.status(500).render('auth/login', { error: 'Произошла ошибка при отправке OTP' });
+        res.status(500).render('auth/login', { error: 'Произошла ошибка при отправке OTP',layout: path.join(__dirname, "../views/layouts/login"),
+            footer: true, });
     }
 };
 
