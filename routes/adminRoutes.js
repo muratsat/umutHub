@@ -4,14 +4,18 @@ const adminController = require('../controllers/adminController');
 const adminAuth = require('../controllers/adminAuthController');
 const schoolController = require('../controllers/adminWeb/school.controller');
 
+router.get('/', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,adminController.getDashboard);
 
 router.get('/login', adminAuth.getLoginPage);
 router.post('/login', adminAuth.postLogin);
+router.get('/logout', adminAuth.getLogout);
 router.get('/enter-otp', adminAuth.getEnterOtpPage);
 router.post('/enter-otp', adminAuth.postEnterOtp);
 
 
 router.get('/dashboard',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, adminController.getDashboard);
+
+router.get('/dashboardSchool',adminAuth.isAuthenticated,adminAuth.isSchoolAdmin, adminController.getDashboardSchool);
 
 
 router.get('/list',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getAdmins);

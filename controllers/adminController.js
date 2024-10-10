@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const School = require('../models/school.model');
 const Class = require('../models/class.model');
 const AdminLog = require('../models/adminLog.model');
+const path = require('path');
 
 exports.getDashboard = async (req, res) => {
   try {
@@ -14,6 +15,24 @@ exports.getDashboard = async (req, res) => {
       classCount,
       teacherCount,
     });
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).render('error', { message: 'Ошибка при загрузке данных панели управления' });
+  }
+};
+
+exports.getDashboardSchool = async (req, res) => {
+  try {
+    const user=await User.findById(req.session.userId);
+    const classCount = await Class.countDocuments({schoolId: user.schoolId});
+    const pupilCount = await User.countDocuments({ role: 0 });
+
+    res.render('admin/dashboardSchool', {
+      classCount,
+      pupilCount,
+      layout: path.join(__dirname, "../views/layouts/schoolAdmin"),
+     }
+    );
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).render('error', { message: 'Ошибка при загрузке данных панели управления' });

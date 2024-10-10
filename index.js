@@ -34,6 +34,8 @@ app.use(session({
 const adminRoutes = require('./routes/adminRoutes.js');
 app.use('/admin', adminRoutes);
 
+app.use('/', adminRoutes);
+
 
 //Import and use the Authentication Route
 const authRoutes = require("./routes/authRoute.js");
