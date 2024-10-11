@@ -1,5 +1,9 @@
 <body>
-    <%- include('../partials/headerSchoolAdmin') %>
+    <%- include('../partials/headerSchoolAdmin', { 
+        title: locals.headerTitle, 
+        schoolId: locals.schoolId,
+        currentPage: locals.currentPage 
+    }) %>
     
     <div class="container">
         <%- body %>

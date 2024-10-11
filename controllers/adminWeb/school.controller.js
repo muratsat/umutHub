@@ -1,5 +1,6 @@
 const School = require('../../models/school.model');
 const User = require('../../models/user.model');
+const path = require('path');
 const Class = require('../../models/class.model');
 const Survey = require('../../models/survey.model');
 const SurveyResponse = require('../../models/surveyResponse.model');
@@ -116,7 +117,11 @@ exports.postCreateClass = async (req, res) => {
 
         const newClass = new Class({ name, description, schoolId });
         await newClass.save();
-        res.redirect('/admin/classes');
+        if(req.session.userRole===1){
+            res.redirect(`/admin/schools/${schoolId}/classes`);    
+        }else{
+            res.redirect('/admin/classes');
+        }
     } catch (error) {
         console.error('Error creating class:', error);
         res.status(500).render('error', { message: 'Ошибка при создании класса' });
@@ -143,13 +148,29 @@ exports.getSchoolById = async (req, res) => {
         // Получаем список администраторов школы
         const schoolAdmins = await User.find({ classId: { $in: classIds }, role: 1}).select('name email');
 
-        res.render('admin/school', { 
-            school, 
-            classCount: classes.length,
-            studentCount, 
-            teacherCount, 
-            schoolAdmins 
-        });
+        if(req.session.userRole===1){
+            res.render('admin/school', { 
+                school, 
+                classCount: classes.length,
+                studentCount, 
+                teacherCount, 
+                schoolAdmins,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                footer: true,
+                headerTitle: `Школа`,
+                currentPage: 'home',
+                schoolId: schoolId
+            });
+        }else{
+            res.render('admin/school', { 
+                school, 
+                classCount: classes.length,
+                studentCount, 
+                teacherCount, 
+                schoolAdmins
+            });
+        }
+       
     } catch (error) {
         console.error('Error fetching school data:', error);
         res.status(500).render('error', { message: 'Ошибка при загрузке данных школы' });
@@ -281,15 +302,32 @@ exports.getSchoolClasses = async (req, res) => {
 
         const totalPages = Math.ceil(totalClasses / limit);
 
-        res.render('admin/school-classes', {
-            classes: classesWithStats,
-            currentPage: page,
-            totalPages,
-            totalClasses,
-            searchQuery,
-            limit,
-            school
-        });
+        if(req.session.userRole===1){
+            res.render('admin/school-classes', {
+                classes: classesWithStats,
+                currentPage: page,
+                totalPages,
+                totalClasses,
+                searchQuery,
+                limit,
+                school,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                footer: true,
+                headerTitle: `Классы`,
+                currentPage: 'classes',
+                schoolId: schoolId
+            });
+        }else{
+            res.render('admin/school-classes', {
+                classes: classesWithStats,
+                currentPage: page,
+                totalPages,
+                totalClasses,
+                searchQuery,
+                limit,
+                school
+            });
+        }
     } catch (error) {
         console.error('Error fetching school classes:', error);
         res.status(500).render('error', { message: 'Ошибка при загрузке классов' });

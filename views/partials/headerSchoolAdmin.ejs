@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель</title>
+    <title><%= title || 'Админ панель' %></title>
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,11 +13,11 @@
     <header class="site-header">
         <nav>
             <ul>
-                <li><a href="/admin/dashboard">Главная</a></li>
-                <li><a href="/admin/classes">Классы</a></li>
-                <li><a href="/admin/pupils">Ученики</a></li>
-                <li><a href="/admin/surveys">Опросы</a></li>
-                <li><a href="">Проекты</a></li>
+                <li class="<%= currentPage === 'home' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>">Главная</a></li>
+                <li class="<%= currentPage === 'classes' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/classes">Классы</a></li>
+                <li class="<%= currentPage === 'pupils' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/pupils">Ученики</a></li>
+                <li class="<%= currentPage === 'surveys' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/surveys">Опросы</a></li>
+                <li class="<%= currentPage === 'projects' ? 'active' : '' %>"><a href="">Проекты</a></li>
                 
                 <!-- Добавьте другие пункты меню по необходимости -->
             </ul>

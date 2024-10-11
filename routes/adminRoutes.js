@@ -29,20 +29,23 @@ router.post('/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,school
 router.get('/schools',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getSchools);
 router.get('/schools/create', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getCreateSchool);
 router.post('/schools/create', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.postCreateSchool);
-router.get('/schools/:id',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getSchoolById);
-router.get('/schools/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getEditSchool);
-router.post('/schools/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.postEditSchool);
-router.delete('/schools/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.deleteSchool);
 
-router.get('/schools/:id/classes',adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getSchoolClasses);
+router.get('/schools/:id',adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin, schoolController.getSchoolById);
+router.get('/schools/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,schoolController.getEditSchool);
+router.post('/schools/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,schoolController.postEditSchool);
+router.delete('/schools/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.deleteSchool);
+router.get('/schools/:id/classes',adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,schoolController.getSchoolClasses);
+router.get('/schools/:id/classes/create', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,schoolController.getCreateClass);
+
+
 router.get('/classes',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getClassesList);
 router.get('/classes/create', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getCreateClass);
-router.get('/schools/:id/classes/create', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getCreateClass);
-router.post('/classes/create', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.postCreateClass);
+
+router.post('/classes/create', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.postCreateClass);
 router.get('/classes/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getClass);
-router.get('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getEditClass);
-router.post('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.postEditClass);
-router.delete('/classes/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.deleteClass);
+router.get('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.getEditClass);
+router.post('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.postEditClass);
+router.delete('/classes/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.deleteClass);
 
 router.get('/pupils',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getPupils);
 router.delete('/pupils/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.deletePupil);

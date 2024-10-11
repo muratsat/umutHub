@@ -92,14 +92,17 @@ exports.postEnterOtp = async (req, res) => {
 
         // Установка сессии
         req.session.userId = user._id;
+        req.session.userRole = user.role;
                 
         if(user.role===1){
-            res.redirect('/admin/dashboardSchool');
+            req.session.schoolId = user.schoolId;
+            res.redirect(`/admin/schools/${user.schoolId}`);
         }else{
             res.redirect('/admin/dashboard');
         }
     } catch (error) {
-        res.status(500).render('auth/enter-otp', { error: 'Произошла ошибка при проверке OTP' });
+        res.status(500).render('auth/enter-otp', { error: 'Произошла ошибка при проверке OTP' ,layout: path.join(__dirname, "../views/layouts/login"),
+            footer: true,});
     }
 };
 
@@ -117,12 +120,325 @@ exports.isSuperAdmin = async (req, res, next) => {
         if (user && user.role === 2) {
             next();
         } else {
-            res.status(403).send('Доступ запрещен');
+            res.status(403).send(`
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Доступ запрещен</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #f0f0f0;
+                        }
+                        .error-container {
+                            text-align: center;
+                            padding: 2rem;
+                            background-color: white;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        }
+                        h1 {
+                            color: #d32f2f;
+                        }
+                        p {
+                            color: #333;
+                        }
+                        a {
+                            color: #1976d2;
+                            text-decoration: none;
+                        }
+                        a:hover {
+                            text-decoration: underline;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <h1>403 - Доступ запрещен</h1>
+                        <p>У вас нет прав для доступа к этой странице.</p>
+                        <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                    </div>
+                </body>
+                </html>
+            `);
         }
     } catch (error) {
-        res.status(500).send('Ошибка сервера');
-    }
+        console.error('Ошибка при проверке прав доступа:', error);
+        res.status(500).send(`
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Ошибка сервера</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    .error-container {
+                        text-align: center;
+                        padding: 2rem;
+                        background-color: white;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    }
+                    h1 {
+                        color: #d32f2f;
+                    }
+                    p {
+                        color: #333;
+                    }
+                    a {
+                        color: #1976d2;
+                        text-decoration: none;
+                    }
+                    a:hover {
+                        text-decoration: underline;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="error-container">
+                    <h1>500 - Ошибка сервера</h1>
+                    <p>Произошла внутренняя ошибка сервера. Пожалуйста, попробуйте позже.</p>
+                    <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                </div>
+            </body>
+            </html>
+        `);
+        }
 };
+
+
+exports.isSuperAdminAndSchoolAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (user && (user.role === 2 || (user.role===1 && req.params.id==user.schoolId))) {
+            next();
+        } else {
+            res.status(403).send(`
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Доступ запрещен</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #f0f0f0;
+                        }
+                        .error-container {
+                            text-align: center;
+                            padding: 2rem;
+                            background-color: white;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        }
+                        h1 {
+                            color: #d32f2f;
+                        }
+                        p {
+                            color: #333;
+                        }
+                        a {
+                            color: #1976d2;
+                            text-decoration: none;
+                        }
+                        a:hover {
+                            text-decoration: underline;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <h1>403 - Доступ запрещен</h1>
+                        <p>У вас нет прав для доступа к этой странице.</p>
+                        <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+    } catch (error) {
+        console.error('Ошибка при проверке прав доступа:', error);
+        res.status(500).send(`
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Ошибка сервера</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    .error-container {
+                        text-align: center;
+                        padding: 2rem;
+                        background-color: white;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    }
+                    h1 {
+                        color: #d32f2f;
+                    }
+                    p {
+                        color: #333;
+                    }
+                    a {
+                        color: #1976d2;
+                        text-decoration: none;
+                    }
+                    a:hover {
+                        text-decoration: underline;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="error-container">
+                    <h1>500 - Ошибка сервера</h1>
+                    <p>Произошла внутренняя ошибка сервера. Пожалуйста, попробуйте позже.</p>
+                    <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                </div>
+            </body>
+            </html>
+        `);
+        }
+};
+
+exports.isSuperAdminAndSchoolAdminCRUD = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (user && (user.role === 2 || (user.role===1))) {
+            next();
+        } else {
+            res.status(403).send(`
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Доступ запрещен</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #f0f0f0;
+                        }
+                        .error-container {
+                            text-align: center;
+                            padding: 2rem;
+                            background-color: white;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        }
+                        h1 {
+                            color: #d32f2f;
+                        }
+                        p {
+                            color: #333;
+                        }
+                        a {
+                            color: #1976d2;
+                            text-decoration: none;
+                        }
+                        a:hover {
+                            text-decoration: underline;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <h1>403 - Доступ запрещен</h1>
+                        <p>У вас нет прав для доступа к этой странице.</p>
+                        <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+    } catch (error) {
+        console.error('Ошибка при проверке прав доступа:', error);
+        res.status(500).send(`
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Ошибка сервера</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    .error-container {
+                        text-align: center;
+                        padding: 2rem;
+                        background-color: white;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    }
+                    h1 {
+                        color: #d32f2f;
+                    }
+                    p {
+                        color: #333;
+                    }
+                    a {
+                        color: #1976d2;
+                        text-decoration: none;
+                    }
+                    a:hover {
+                        text-decoration: underline;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="error-container">
+                    <h1>500 - Ошибка сервера</h1>
+                    <p>Произошла внутренняя ошибка сервера. Пожалуйста, попробуйте позже.</p>
+                    <p>Вернуться на <a href="/admin/dashboard">главную страницу</a></p>
+                </div>
+            </body>
+            </html>
+        `);
+        }
+};
+
 
 exports.isSchoolAdmin = async (req, res, next) => {
     try {

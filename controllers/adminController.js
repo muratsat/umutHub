@@ -9,11 +9,13 @@ exports.getDashboard = async (req, res) => {
     const schoolCount = await School.countDocuments();
     const classCount = await Class.countDocuments();
     const teacherCount = await User.countDocuments({ role: 1 });
+    const pupilCount = await User.countDocuments({ role: 0 });
 
     res.render('admin/dashboard', {
       schoolCount,
       classCount,
       teacherCount,
+      pupilCount
     });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
