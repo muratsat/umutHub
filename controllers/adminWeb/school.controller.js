@@ -609,15 +609,26 @@ exports.getPupils = async (req, res) => {
         const searchQuery = req.query.search || '';
         const searchRegex = new RegExp(searchQuery, 'i');
 
-        const pupilsQuery = User.find({role: 0, email: searchRegex })
+        let pupilsQuery;
+
+        if(req.session.userRole===1){
+            pupilsQuery = User.find({role: 0, email: searchRegex, schoolId: req.session.schoolId})
             .populate('name')
             .skip(skip)
             .limit(limit)
             .lean();
+        }else{
+            pupilsQuery = User.find({role: 0, email: searchRegex})
+            .populate('name')
+            .skip(skip)
+            .limit(limit)
+            .lean();
+        }
+        
 
         const [pupils, totalPupils] = await Promise.all([
             pupilsQuery.exec(),
-            User.countDocuments({ email: searchRegex, role: 0})
+            User.countDocuments({ email: searchRegex, role: 0, schoolId: req.session.schoolId})
         ]);
 
         // Получаем количество учеников для каждого класса
@@ -638,14 +649,30 @@ exports.getPupils = async (req, res) => {
 
         const totalPages = Math.ceil(totalPupils / limit);
 
-        res.render('admin/pupil/pupil-list', {
-            pupils: pupilsWithStats,
-            currentPage: page,
-            totalPages,
-            totalPupils,
-            searchQuery,
-            limit
-        });
+        if(req.session.userRole===1){
+            res.render('admin/pupil/pupil-list', {
+                pupils: pupilsWithStats,
+                currentPage: page,
+                totalPages,
+                totalPupils,
+                searchQuery,
+                limit,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                headerTitle: `Ученики`,
+                currentPageTitle: 'pupils',
+                schoolId: req.session.schoolId
+            });
+        }else{
+            res.render('admin/pupil/pupil-list', {
+                pupils: pupilsWithStats,
+                currentPage: page,
+                totalPages,
+                totalPupils,
+                searchQuery,
+                limit
+            });
+        }
+        
     } catch (error) {
         console.error('Error fetching pupils:', error);
         res.status(500).render('error', { message: 'Ошибка при загрузке списка учеников' });
@@ -789,16 +816,29 @@ exports.getSurveys = async (req, res) => {
         const searchQuery = req.query.search || '';
         const searchRegex = new RegExp(searchQuery, 'i');
 
-        const surveysQuery = Survey.find({name: searchRegex })
+        let surveysQuery;
+        
+        if(req.session.userRole===1){
+            surveysQuery = Survey.find({name: searchRegex, schoolId: req.session.schoolId})
             .populate('name')
             .skip(skip)
             .limit(limit)
             .lean();
+        }else{
+            surveysQuery = Survey.find({name: searchRegex })
+            .populate('name')
+            .skip(skip)
+            .limit(limit)
+            .lean();
+        }
 
+        console.log(`${surveysQuery} survey`);
         const [surveys, totalSurveys] = await Promise.all([
             surveysQuery.exec(),
-            Survey.countDocuments({ name: searchRegex})
+            Survey.countDocuments({ name: searchRegex, schoolId: req.session.schoolId})
         ]);
+
+        console.log(`${surveys} survey`);
 
         // Получаем количество учеников для каждого класса
         const surveysWithStats = await Promise.all(surveys.map(async (surveyItem) => {
@@ -821,14 +861,30 @@ exports.getSurveys = async (req, res) => {
 
         const totalPages = Math.ceil(totalSurveys / limit);
 
-        res.render('admin/survey/survey-list.ejs', {
-            surveys: surveysWithStats,
-            currentPage: page,
-            totalPages,
-            totalSurveys,
-            searchQuery,
-            limit
-        });
+        if(req.session.userRole===1){
+            res.render('admin/survey/survey-list.ejs', {
+                surveys: surveysWithStats,
+                currentPage: page,
+                totalPages,
+                totalSurveys,
+                searchQuery,
+                limit,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                headerTitle: `Опросы`,
+                currentPageTitle: 'surveys',
+                schoolId: req.session.schoolId
+            });
+        }else{
+            res.render('admin/survey/survey-list.ejs', {
+                surveys: surveysWithStats,
+                currentPage: page,
+                totalPages,
+                totalSurveys,
+                searchQuery,
+                limit
+            });
+        }
+        
     } catch (error) {
         console.error('Error fetching surveys:', error);
         res.status(500).render('error', { message: 'Ошибка при загрузке списка опросов' });

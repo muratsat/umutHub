@@ -2,6 +2,7 @@ const Project = require('../../models/project.model');
 const School = require('../../models/school.model');
 const Class = require('../../models/class.model');
 const User = require('../../models/user.model');
+const path = require('path');
 
 
 
@@ -16,11 +17,22 @@ exports.getProjectList = async (req,res,next) => {
         const searchQuery = req.query.search || '';
         const searchRegex = new RegExp(searchQuery, 'i');
 
-        const projectQuery = Project.find({name: searchRegex })
+        let projectQuery;
+
+        if(req.session.userRole===1){
+            projectQuery = Project.find({name: searchRegex, schoolId: req.session.schoolId})
             .populate('name')
             .skip(skip)
             .limit(limit)
             .lean();
+        }else{
+            projectQuery = Project.find({name: searchRegex })
+            .populate('name')
+            .skip(skip)
+            .limit(limit)
+            .lean();
+        }
+        
 
         const [projects, totalProject] = await Promise.all([
             projectQuery.exec(),
@@ -28,12 +40,7 @@ exports.getProjectList = async (req,res,next) => {
         ]);
 
         const projectsWithStats = await Promise.all(projects.map(async (projectItem) => {
-            const user=await User.findById(projectItem.users[0]);
-            const userClass = await Class.findById(user.classId);
-            var school;
-            if(userClass){
-                school = await School.findById(userClass.schoolId).select('name');
-            }
+            var school=await School.findById(projectItem.schoolId).select('name');
             const schoolName = school ? school.name : 'Неизвестная школа';
             const inProjectUserCount=projectItem.users.length;
             return {
@@ -45,6 +52,20 @@ exports.getProjectList = async (req,res,next) => {
 
         const totalPages = Math.ceil(totalProject / limit);
 
+        if(req.session.userRole===1){
+            res.render('admin/project/project-list.ejs', {
+                projects: projectsWithStats,
+                currentPage: page,
+                totalPages,
+                totalProject,
+                searchQuery,
+                limit,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                headerTitle: `Проекты`,
+                currentPageTitle: 'projects',
+                schoolId: req.session.schoolId
+            });
+        }
         res.render('admin/project/project-list.ejs', {
             projects: projectsWithStats,
             currentPage: page,
@@ -67,7 +88,7 @@ exports.deleteProject = async (req, res) => {
         // Проверяем, есть ли связанные классы
         const project = await Project.findById(projectId);
         if (project.users.length > 0) {
-            return res.status(400).json({ success: false, message: 'Нельзя удалить проект, у которой есть участники' });
+            return res.status(400).json({ success: false, message: 'Нельзя удалить проект, у которого есть участники' });
         }
 
         // Если классов нет, удаляем школу

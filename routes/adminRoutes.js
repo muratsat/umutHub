@@ -50,13 +50,13 @@ router.get('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin
 router.post('/classes/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.postEditClass);
 router.delete('/classes/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdminCRUD,schoolController.deleteClass);
 
-router.get('/pupils',adminAuth.isAuthenticated,adminAuth.isSuperAdmin, schoolController.getPupils);
+router.get('/pupils',adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin, schoolController.getPupils);
 router.delete('/pupils/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.deletePupil);
 // router.get('/pupils/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getEditPupil);
 // router.post('/pupils/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.postEditPupil);
 
 
-router.get('/surveys',adminAuth.isAuthenticated, adminAuth.isSuperAdmin,schoolController.getSurveys);
+router.get('/surveys',adminAuth.isAuthenticated, adminAuth.isSuperAdminAndSchoolAdmin,schoolController.getSurveys);
 
 router.get('/schools/:id/pupils', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getSchoolStudents);
 router.get('/schools/:id/admins', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,schoolController.getSchoolAdmins);
@@ -66,10 +66,10 @@ router.get('/schools/:id/admins', adminAuth.isAuthenticated,adminAuth.isSuperAdm
 
 
 //project
-router.get('/projects',adminAuth.isAuthenticated, adminAuth.isSuperAdmin,projectController.getProjectList);
-router.delete('/projects/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,projectController.deleteProject);
-router.get('/projects/:id/edit', projectController.editProject);
-router.get('/projects/create',adminAuth.isAuthenticated, adminAuth.isSuperAdmin,projectController.createProject);
+router.get('/projects',adminAuth.isAuthenticated, adminAuth.isSuperAdminAndSchoolAdmin,projectController.getProjectList);
+router.delete('/projects/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,projectController.deleteProject);
+router.get('/projects/:id/edit', adminAuth.isAuthenticated,adminAuth.isSuperAdminAndSchoolAdmin,projectController.editProject);
+router.get('/projects/create',adminAuth.isAuthenticated, adminAuth.isSuperAdminAndSchoolAdmin,projectController.createProject);
 
 // Загрузка классов школы
 router.get('/api/schools/:schoolId/classes', async (req, res) => {

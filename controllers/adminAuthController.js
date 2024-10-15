@@ -226,7 +226,7 @@ exports.isSuperAdmin = async (req, res, next) => {
 exports.isSuperAdminAndSchoolAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.session.userId);
-        if (user && (user.role === 2 || (user.role===1 && req.params.id==user.schoolId))) {
+        if (user && (user.role === 2 || (user.role===1))) {
             next();
         } else {
             res.status(403).send(`
