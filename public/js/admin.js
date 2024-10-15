@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let aValue = a.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent.trim();
             let bValue = b.querySelector(`td:nth-child(${getColumnIndex(column)})`).textContent.trim();
             
-            if (column === 'id' || column === 'studentCount' || column === 'teacherCount') {
+            if (column === 'id' || column === 'studentCount' || column === 'teacherCount',column === 'count') {
                 aValue = parseInt(aValue, 10);
                 bValue = parseInt(bValue, 10);
                 return asc ? aValue - bValue : bValue - aValue;
@@ -90,6 +90,15 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const pupilId = deleteButton.dataset.pupilId;
             deletePupil(pupilId);
+        }
+    });
+
+    document.body.addEventListener('click', function(event) {
+        const deleteButton = event.target.closest('.btn-deleteProject');
+        if (deleteButton) {
+            event.preventDefault();
+            const projectId = deleteButton.dataset.projectId;
+            deleteProject(projectId);
         }
     });
 
@@ -217,6 +226,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    function deleteProject(projectId) {
+        if (confirm('Вы уверены, что хотите удалить этот проект?')) {
+            fetch(`/admin/projects/${projectId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`tr[data-project-id="${projectId}"]`);
+                    if (row) {
+                        row.remove();
+                        console.log('Project row removed');
+                    } else {
+                        console.error('Row not found');
+                    }
+                    alert('Проект успешно удален');
+                } else {
+                    alert(data.message || 'Ошибка при удалении проекта');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при удалении проекта');
+            });
+        }
+    }
     // Обработка формы редактирования школы
     
 
@@ -246,4 +285,5 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePagination();
 
     // Дополнительные функции админ-панели могут быть добавлены здесь
+    
 });

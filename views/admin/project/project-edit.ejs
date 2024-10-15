@@ -1,0 +1,36 @@
+    <div class="container">
+        <h1>Редактирование проекта школы</h1>
+        
+        <form id="projectForm">
+            <label for="projectName">Название проекта:</label>
+            <input type="text" id="projectName" name="projectName" required>
+            
+            <label for="projectDescription">Описание проекта:</label>
+            <textarea id="projectDescription" name="projectDescription" rows="4" required></textarea>
+            
+            <label for="schoolSelect">Выберите школу:</label>
+            <select id="schoolSelect" name="schoolId" required>
+                <option value="">Выберите школу</option>
+                <!-- Опции будут добавлены динамически -->
+            </select>
+            
+            <button type="submit">Сохранить изменения</button>
+        </form>
+        
+        <h2>Участники проекта</h2>
+        <div id="participantSelection">
+            <label for="classSelect">Выберите класс:</label>
+            <select id="classSelect" name="classId">
+                <option value="">Сначала выберите школу</option>
+            </select>
+            
+            <div id="studentsList" class="student-list">
+                <!-- Список учеников будет добавлен динамически -->
+            </div>
+        </div>
+        
+        <h3>Текущие участники проекта</h3>
+        <ul id="currentParticipants">
+            <!-- Список текущих участников будет добавлен динамически -->
+        </ul>
+    </div>

@@ -13,11 +13,11 @@
     <header class="site-header">
         <nav>
             <ul>
-                <li class="<%= currentPage === 'home' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>">Главная</a></li>
-                <li class="<%= currentPage === 'classes' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/classes">Классы</a></li>
-                <li class="<%= currentPage === 'pupils' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/pupils">Ученики</a></li>
-                <li class="<%= currentPage === 'surveys' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/surveys">Опросы</a></li>
-                <li class="<%= currentPage === 'projects' ? 'active' : '' %>"><a href="">Проекты</a></li>
+                <li class="<%= currentPageTitle === 'home' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>">Главная</a></li>
+                <li class="<%= currentPageTitle === 'classes' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/classes">Классы</a></li>
+                <li class="<%= currentPageTitle === 'pupils' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/pupils">Ученики</a></li>
+                <li class="<%= currentPageTitle === 'surveys' ? 'active' : '' %>"><a href="/admin/schools/<%= schoolId %>/surveys">Опросы</a></li>
+                <li class="<%= currentPageTitle === 'projects' ? 'active' : '' %>"><a href="">Проекты</a></li>
                 
                 <!-- Добавьте другие пункты меню по необходимости -->
             </ul>

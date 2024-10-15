@@ -158,7 +158,7 @@ exports.getSchoolById = async (req, res) => {
                 layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
                 footer: true,
                 headerTitle: `Школа`,
-                currentPage: 'home',
+                currentPageTitle: 'home',
                 schoolId: schoolId
             });
         }else{
@@ -312,9 +312,8 @@ exports.getSchoolClasses = async (req, res) => {
                 limit,
                 school,
                 layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
-                footer: true,
                 headerTitle: `Классы`,
-                currentPage: 'classes',
+                currentPageTitle: 'classes',
                 schoolId: schoolId
             });
         }else{
@@ -461,18 +460,36 @@ exports.getEditClass = async (req, res) => {
         if (!myClass) {
             return res.status(404).render('error', { message: 'Класс не найден' });
         }
-
-        const schools=await School.find();
+        let schools;
+        if(req.session.userRole===1){
+            const school=await School.findById(myClass.schoolId);
+            schools=[school];
+        }else{
+            schools=await School.find();
+        }
         
         
         if (!schools) {
-            return res.status(404).render('error', { message: 'Школы не найдены' });
+            return res.status(404).render('error', { message: 'Школы не найдено' });
         }
 
-        res.render('admin/class-edit', { 
-            schools,
-            myClass
-        });
+        if(req.session.userRole===1){
+            res.render('admin/class-edit', { 
+                schools,
+                myClass,
+                layout: path.join(__dirname, "../../views/layouts/schoolAdmin"),
+                footer: true,
+                headerTitle: `Редактировать класс`,
+                currentPageTitle: 'classes',
+                schoolId: myClass.schoolId
+            });
+        }else{
+            res.render('admin/class-edit', { 
+                schools,
+                myClass
+            });
+        }
+        
     } catch (error) {
         console.error('Error fetching class for edit:', error);
         res.status(500).render('error', { message: 'Ошибка при загрузке данных школы' });
@@ -500,7 +517,11 @@ exports.postEditClass = async (req, res) => {
 
         await myClass.save();
 
-        res.redirect('/admin/classes');
+        if(req.session.userRole===1){
+            res.redirect(`/admin/schools/${schoolId}/classes`);
+        }else{
+            res.redirect('/admin/classes');
+        }
     } catch (error) {
         console.error('Error updating class:', error);
         res.status(500).render('error', { message: 'Ошибка при обновлении класса' });
@@ -813,3 +834,4 @@ exports.getSurveys = async (req, res) => {
         res.status(500).render('error', { message: 'Ошибка при загрузке списка опросов' });
     }
 };
+

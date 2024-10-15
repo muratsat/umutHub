@@ -1,18 +1,17 @@
 <body>
     <div class="container">
-        <h1>Список классов</h1>
-        <p><strong>Школа:</strong> <%= school.name %></p>
-        <h1></h1>
-        <form class="search-form" action="/admin/classes" method="GET">
-            <input type="text" name="search" value="<%= locals.searchQuery || '' %>" placeholder="Поиск классов...">
+        <h1>Проекты</h1>
+        
+        <form class="search-form" action="/admin/projects" method="GET">
+            <input type="text" name="search" value="<%= locals.searchQuery || '' %>" placeholder="Поиск проектов...">
             <button type="submit" class="btn btn-search">Поиск</button>
         </form>
-
         <div class="actions-container">
-            <a href="/admin/schools/<%= school._id %>/classes/create" class="btn btn-create">Создать класс</a>
+            
+            
+            <a href="/admin/projects/create" class="btn btn-create">Создать проект</a>
         </div>
-
-        <% if (locals.classes && classes.length > 0) { %>
+        <% if (locals.projects && projects.length > 0) { %>
             <table class="schools-table">
                 <thead>
                     <tr>
@@ -28,29 +27,29 @@
                         </th>
                         <th class="sortable" data-sort="school">
                             <div class="th-content">
-                                Описание <span class="sort-icon">&#x25B2;</span>
+                                Школа <span class="sort-icon">&#x25B2;</span>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="studentCount">
+                        <th class="sortable" data-sort="count">
                             <div class="th-content">
-                                Ученики <span class="sort-icon">&#x25B2;</span>
+                                Кол. участников <span class="sort-icon">&#x25B2;</span>
                             </div>
                         </th>
                         <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% classes.forEach((classItem, index) => { %>
-                        <tr data-class-id="<%= classItem._id %>">
+                    <% projects.forEach((projectItem, index) => { %>
+                        <tr data-pupil-id="<%= projectItem._id %>">
                             <td><%= (currentPage - 1) * limit + index + 1 %></td>
-                            <td><a href="/admin/classes/<%= classItem._id %>"><%= classItem.name %></a></td>
-                            <td><%= classItem.description %></td>
-                            <td><%= classItem.studentCount %></td>
+                            <td><%= projectItem.name %></td>
+                            <td><%= projectItem.schoolName %></td>
+                            <td><%= projectItem.inProjectUserCount %></td>
                             <td>
-                                <a href="/admin/classes/<%= classItem._id %>/edit" class="btn btn-edit" title="Редактировать">
+                                <a href="/admin/projects/<%= projectItem._id %>/edit" class="btn btn-edit" title="Редактировать">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button class="btn btn-deleteClass" data-class-id="<%= classItem._id %>" title="Удалить">
+                                <button class="btn btn-deleteProject" data-project-id="<%= projectItem._id %>" title="Удалить">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
@@ -65,8 +64,9 @@
                 <!-- Содержимое будет динамически обновляться с помощью JavaScript -->
             </div>
             
+            <p class="total-classes">Всего проектов: <%= totalProject %></p>
         <% } else { %>
-            <p class="no-classes">Классы не найдены.</p>
+            <p class="no-classes">Опросы не найдены.</p>
         <% } %>
     </div>
 </body>

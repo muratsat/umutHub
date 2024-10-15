@@ -3,6 +3,9 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const adminAuth = require('../controllers/adminAuthController');
 const schoolController = require('../controllers/adminWeb/school.controller');
+const projectController = require('../controllers/adminWeb/project.controller');
+const Class = require('../models/class.model');
+const User = require('../models/user.model');
 
 router.get('/', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,adminController.getDashboard);
 
@@ -60,5 +63,32 @@ router.get('/schools/:id/admins', adminAuth.isAuthenticated,adminAuth.isSuperAdm
 // router.get('/users', adminController.getSchoolAdmins);
 // router.get('/create-school-admin', adminController.getCreateSchoolAdmin);
 // router.post('/create-school-admin', adminController.postCreateSchoolAdmin);
+
+
+//project
+router.get('/projects',adminAuth.isAuthenticated, adminAuth.isSuperAdmin,projectController.getProjectList);
+router.delete('/projects/:id', adminAuth.isAuthenticated,adminAuth.isSuperAdmin,projectController.deleteProject);
+router.get('/projects/:id/edit', projectController.editProject);
+router.get('/projects/create',adminAuth.isAuthenticated, adminAuth.isSuperAdmin,projectController.createProject);
+
+// Загрузка классов школы
+router.get('/api/schools/:schoolId/classes', async (req, res) => {
+    try {
+        const classes = await Class.find({ schoolId: req.params.schoolId });
+        res.json(classes);
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при загрузке классов' });
+    }
+});
+
+// Загрузка учеников класса
+router.get('/api/classes/:classId/students', async (req, res) => {
+    try {
+        const students = await User.find({ classId: req.params.classId, role: 0 });
+        res.json(students);
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при загрузке учеников' });
+    }
+});
 
 module.exports = router;
