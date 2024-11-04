@@ -1,23 +1,42 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
 const router = express.Router();
 const Discussion = require('../models/discussion.model');
-const Message = require('../models/message.model');
-const authMiddleware = require('../middlewares/authMiddleware');
-
+const jwt = require('jsonwebtoken');
 const app = express();
+const Message = require('../models/message.model');
+const School = require('../models/school.model');
+const authMiddleware = require('../middlewares/authMiddleware');
 const server = http.createServer(app);
-const io = socketIo(server);
+const { Server } = require("socket.io");
+const io = new Server(server);
+const User = require('../models/user.model');
+
+
+
+server.listen(3400, () => {
+  console.log('listening on *:3400');
+});
+
 
 // Middleware для аутентификации WebSocket соединений
-io.use((socket, next) => {
+io.use( async (socket, next) => {
   // Здесь должна быть ваша логика аутентификации
   // Например, проверка токена из query параметров
   const token = socket.handshake.query.token;
   // Проверьте token и установите socket.user
   // Если аутентификация не удалась, вызовите next(new Error('Authentication error'));
-  next();
+
+
+  try {
+    const decoded = jwt.verify(token, 'secret');
+    const user = await User.findById(decoded.userId);
+
+    socket.user = user;  
+    next();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 io.on('connection', (socket) => {
@@ -48,12 +67,16 @@ io.on('connection', (socket) => {
     });
     await newMessage.save();
     
+    const imagePath = socket.user.photo.path;
+    const school = await School.findById(socket.user.schoolId).select('name');
     // Отправьте сообщение всем участникам обсуждения
     io.to(discussionId).emit('new message', {
       message: newMessage,
       author: {
         _id: socket.user._id,
-        name: socket.user.name
+        name: socket.user.name,
+        imagePath: imagePath,
+        school : school.name
       }
     });
   });
@@ -62,6 +85,9 @@ io.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
+
+
+
 
 // Создание нового обсуждения (только для админа)
 router.post('/createDiscussion', authMiddleware.isAdmin, async (req, res) => {
@@ -84,17 +110,20 @@ router.post('/createDiscussion', authMiddleware.isAdmin, async (req, res) => {
 // Получение списка обсуждений
 router.get('/list', authMiddleware.auth, async (req, res) => {
   try {
-    const { schoolId } = req.body;
-    const query = { isActive: true };
-    if (schoolId) {
-      query.$or = [{ isGlobal: true }, { schoolId: schoolId }];
-    } else {
-      query.isGlobal = true;
-    }
-    const discussions = await Discussion.find(query)
+    const querySchool = { isActive: true, schoolId : req.user.schoolId };
+    const queryGlobal = { isActive: true,  isGlobal: true };
+
+    const discussionsSchool = await Discussion.find(querySchool)
       .sort({ createdAt: -1 })
-      .populate('title',"description");
-    res.json(discussions);
+      .select('title description');
+
+      const discussionsGlobal = await Discussion.find(queryGlobal)
+      .sort({ createdAt: -1 })
+      .select('title description');
+    res.json({
+      schoolDiscussions : discussionsSchool,
+      globalDiscussions : discussionsGlobal
+    });
   } catch (error) {
     res.status(400).json({ message: 'Ошибка при получении обсуждений', error: error.message });
   }

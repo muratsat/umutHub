@@ -14,9 +14,8 @@ exports.createClass = async (req,res,next) => {
 
 exports.getClassList = async (req,res,next) => {
     try {
-
-        let classList = await ClassServices.getClassList();
-
+        const {schoolId} = req.body;
+        let classList = await ClassServices.getClassList(schoolId);
         res.json({status: true, success:classList});
     } catch (error) {
         next(error);

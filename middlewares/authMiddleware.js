@@ -4,7 +4,7 @@ const User = require('../models/user.model');
 //Middleware for Authentication
 exports.auth = async (req, res, next) => {
   const token = req.header('Authorization');
-
+ 
   if (!token) {
     return res.status(401).json({ message: 'Authorization token not found' });
   }

@@ -7,7 +7,7 @@ class SchoolServices{
     }
 
     static async getSchoolList(){
-        const schoolData = await SchoolModel.find();
+        const schoolData = await SchoolModel.find().select('_id name');
         return schoolData;
     }
 }

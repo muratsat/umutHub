@@ -6,8 +6,9 @@ class ClassServices{
         return await createSchool.save();
     }
 
-    static async getClassList(){
-        const classData = await ClassModel.find();
+    static async getClassList(schoolId){
+        
+        const classData = await ClassModel.find({schoolId}).select('_id name');
         return classData;
     }
 }

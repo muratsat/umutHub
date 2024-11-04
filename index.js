@@ -57,6 +57,9 @@ app.use('/project',projectRoutes);
 const userRoutes= require("./routes/user.router.js");
 app.use('/users',userRoutes);
 
+const userIdeaRoutes= require("./routes/idea.router.js");
+app.use('/userIdea',userIdeaRoutes);
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

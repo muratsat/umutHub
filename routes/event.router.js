@@ -37,7 +37,7 @@ router.post('/createEvent', authMiddleware.isAdmin, async (req, res) => {
 // Получение списка событий
 router.get('/eventList', authMiddleware.auth, async (req, res) => {
   try {
-    const { classId } = req.body;
+    const classId  = req.user.classId;
     // const query = {
     //   date: { $gte: new Date(start), $lte: new Date(end) }
     // };

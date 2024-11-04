@@ -6,6 +6,6 @@ router.get('/nd', index);
 
 router.post('/createClass',ClassController.createClass);
 
-router.get('/getClassList',ClassController.getClassList);
+router.post('/getClassList',ClassController.getClassList);
 
 module.exports= router;

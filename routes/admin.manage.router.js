@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/user.model');
 const School = require('../models/school.model');
 const authMiddleware = require('../middlewares/authMiddleware');
-
+ 
 // Создание школьного администратора
 router.post('/create-school-admin', authMiddleware.isAdmin, async (req, res) => {
   try {

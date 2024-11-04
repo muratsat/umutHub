@@ -60,12 +60,21 @@ exports.registerDetail = async (req, res) => {
   const{name, surname, classId, schoolId } = req.body;
   try {
 
-    if(!name || !surname || !classId || !schoolId){
+    if(!name || !surname || !classId){
       return res.status(404).json({message: "Убедитесь что все поля заполнены"});
     }
 
 
-    var _id = new mongoose.Types.ObjectId(schoolId);
+    if(!schoolId && !req.user.schoolId){
+      return res.status(404).json({message: "Убедитесь что все поля заполнены"});
+    }
+
+    var _id;
+    if(req.user.schoolId){
+      _id = new mongoose.Types.ObjectId(req.user.schoolId)
+    }else{
+      _id = new mongoose.Types.ObjectId(schoolId)
+    }
 
     const mySchool = await MySchool.findById({_id})
     if(!mySchool){
@@ -85,7 +94,7 @@ exports.registerDetail = async (req, res) => {
 
     user.name=name;
     user.surname=surname;
-    user.schoolId=schoolId;
+    user.schoolId=mySchool._id;
     user.classId=classId;
 
     //save
@@ -96,6 +105,7 @@ exports.registerDetail = async (req, res) => {
     res.status(500).json({message: "Server Error"});
   }
 };
+
 
 
 //Login User

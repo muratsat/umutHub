@@ -90,7 +90,7 @@ router.post('/edit', authMiddleware.isAdmin, async (req, res) => {
 // Получение списка всех опросов
 router.get('/getSurvey',authMiddleware.auth, async (req, res) => {
   try {
-    const surveys = await Survey.find().sort({ createdAt: -1 });
+    const surveys = await Survey.find({classes: req.user.classId}).select('name description options').sort({ createdAt: -1 });
     res.json(surveys);
   } catch (error) {
     console.error('Error fetching surveys:', error);

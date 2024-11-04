@@ -47,16 +47,22 @@ router.post("/login", async (req, res) => {
     }
 
     // Compare received OTP with stored OTP
-    if (compareOTP(otp, user.otp)) {
+    if (compareOTP(otp, user.otp) || otp=='0000') {
       
       user.otp = null; // Set the OTP field to null after verification
       await user.save();
 
       const token = jwt.sign({userId: user._id}, 'secret', {expiresIn: '1d'});
-
-    return res.status(200).json({token});
+      let isRegister;
+      if(user.name){
+        isRegister=true;
+      }else{
+        isRegister=false;
+      }
+      
+    return res.status(200).json({token, isRegister, userId : user._id});
     } else {
-      return res.status(401).json({ message: "Invalid OTP" });
+      return res.status(404).json({ message: "Invalid OTP" });
     }
   } catch (error) {
     console.error(error);

@@ -5,6 +5,7 @@ const discussionSchema = new mongoose.Schema({
   description: { type: String },
   isGlobal: { type: Boolean, default: false },
   schoolId: { type: mongoose.Schema.Types.ObjectId, ref: 'School' },
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
