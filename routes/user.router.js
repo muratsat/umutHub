@@ -129,7 +129,7 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-router.get('/deleteAccount', authMiddleware.auth, async (req, res) => {
+router.get('/deleteUser', authMiddleware.auth, async (req, res) => {
   try {
 
     // Проверяем существование пользователя
