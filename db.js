@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 //mongodb uri
-const MONGO_URI = process.env.MONGO_URI_THIRD;
+const MONGO_URI = process.env.MONGO_URI;
 
 //connect to db
 const connectDb = async () => {
