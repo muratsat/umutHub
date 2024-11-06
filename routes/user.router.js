@@ -3,6 +3,7 @@ const UserModel = require('../models/user.model');
 const Survey = require('../models/survey.model');
 const ProjectModel = require('../models/project.model');
 const Discussion = require('../models/discussion.model');
+const User = require('../models/discussion.model');
 const EventModel = require('../models/event.model');
 
 const router=require('express').Router();
@@ -126,6 +127,40 @@ router.get('/projects', async (req, res) => {
     } else {
       res.status(500).json({ message: 'Внутренняя ошибка сервера' });
     }
+  }
+});
+
+router.get('/deleteAccount', authMiddleware.auth, async (req, res) => {
+  try {
+
+    // Проверяем существование пользователя
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Удаляем пользователя
+    await User.findByIdAndDelete(req.user._id);
+
+    // Можно также удалить связанные данные
+    // await Post.deleteMany({ userId });
+    // await Comment.deleteMany({ userId });
+    
+    return res.status(200).json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error deleting user',
+      error: error.message
+    });
   }
 });
 

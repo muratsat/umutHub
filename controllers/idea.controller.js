@@ -1,6 +1,7 @@
 const mongoose=require('mongoose');
 const User = require("../models/user.model");
 const IdeaModel = require("../models/idea.model");
+const updateUserRating = require('../utils/updateUserRating');
 
 
 
@@ -10,7 +11,8 @@ exports.createIdea = async (req,res,next) => {
         const {name, description} = req.body;
 
         const idea = new IdeaModel({name,description,userId: req.user._id, schoolId: req.user.schoolId});
-    
+
+        await updateUserRating(req.user._id, 1);
         await idea.save();
 
         res.json({status: true, success: idea});
