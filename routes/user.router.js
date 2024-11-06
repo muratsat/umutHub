@@ -3,7 +3,6 @@ const UserModel = require('../models/user.model');
 const Survey = require('../models/survey.model');
 const ProjectModel = require('../models/project.model');
 const Discussion = require('../models/discussion.model');
-const User = require('../models/discussion.model');
 const EventModel = require('../models/event.model');
 
 const router=require('express').Router();
@@ -134,16 +133,10 @@ router.get('/deleteAccount', authMiddleware.auth, async (req, res) => {
   try {
 
     // Проверяем существование пользователя
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
+    console.log(req.user);
 
     // Удаляем пользователя
-    await User.findByIdAndDelete(req.user._id);
+    await UserModel.findByIdAndDelete(req.user._id);
 
     // Можно также удалить связанные данные
     // await Post.deleteMany({ userId });
