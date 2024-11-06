@@ -10,7 +10,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server,{
-  path: '/socket/',
+  path: '/socket',
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
