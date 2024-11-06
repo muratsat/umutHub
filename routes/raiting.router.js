@@ -12,7 +12,9 @@ router.get('/all', authMiddleware.auth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const users = await User.aggregate([
+
+
+    const userList = await User.aggregate([
       {
         $lookup: {
           from: 'classes',
@@ -22,6 +24,13 @@ router.get('/all', authMiddleware.auth, async (req, res) => {
         }
       },
       { $unwind: '$classInfo' },
+      {
+        $match: {
+          _id: { $ne: req.user._id },
+          role : 0,
+          schoolId : req.user.schoolId
+        }
+      },
       {
         $lookup: {
           from: 'schools',
@@ -38,19 +47,37 @@ router.get('/all', authMiddleware.auth, async (req, res) => {
         $project: {
           name: 1,
           rating: 1,
+          surname: 1,
           'classInfo.name': 1,
           'schoolInfo.name': 1
         }
       }
     ]);
 
-    const total = await User.countDocuments();
+    const users = await Promise.all(userList.map(async (user) => {
+      
+      return {
+        _id : user._id,
+        rating : user.rating,
+        name : `${user.name} ${user.surname}`,
+        className : user.classInfo.name,
+        schoolName : user.schoolInfo.name
+      };
+
+
+  }));
+
+    const total = await User.countDocuments({role : 0});
 
     res.json({
+      name : req.user.name,
+      surname : req.user.surname,
+      rating : req.user.rating,
+      photo : req.user.photo.path,
       users,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
-      totalUsers: total
+      totalUsers : total
     });
   } catch (error) {
     console.error('Error fetching ratings:', error);
@@ -58,40 +85,122 @@ router.get('/all', authMiddleware.auth, async (req, res) => {
   }
 });
 
-// Получение списка рейтингов по конкретной школе
-router.get('/school', authMiddleware.auth, async (req, res) => {
+router.get('/allSchool', authMiddleware.auth, async (req, res) => {
   try {
-    const { schoolId } = req.body;
+    const userId = req.user._id;
+    const userSchoolId = req.user.schoolId;
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const school = await School.findById(schoolId);
-    if (!school) {
-      return res.status(404).json({ message: 'Школа не найдена' });
-    }
+    // Сначала получаем школу пользователя
+    const userSchoolRating = await User.aggregate([
+      {
+        $group: {
+          _id: "$schoolId",
+          totalRating: { $sum: "$rating" },
+          userCount: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          _id: userSchoolId,
+        }
+      },
+      {
+        $lookup: {
+          from: "schools",
+          localField: "_id",
+          foreignField: "_id",
+          as: "schoolInfo"
+        }
+      },
+      {
+        $unwind: "$schoolInfo"
+      },
+      {
+        $project: {
+          _id: 1,
+          schoolName: "$schoolInfo.name",
+          rating: "$totalRating",
+          userCount: 1
+        }
+      }
+    ]);
 
-    const classIds = await Class.find({ schoolId: schoolId }).distinct('_id');
+    // Получаем остальные школы с пагинацией
+    const otherSchoolsRatings = await User.aggregate([
+      {
+        $group: {
+          _id: "$schoolId",
+          totalRating: { $sum: "$rating" }
+        }
+      },
+      {
+        $match: {
+          _id: { $ne: userSchoolId }, // Исключаем школу пользователя
+        }
+      },
+      {
+        $lookup: {
+          from: "schools",
+          localField: "_id",
+          foreignField: "_id",
+          as: "schoolInfo"
+        }
+      },
+      {
+        $unwind: "$schoolInfo"
+      },
+      {
+        $project: {
+          schoolName: "$schoolInfo.name",
+          rating: "$totalRating"
+        }
+      },
+      {
+        $sort: {
+          rating: -1
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limit
+      }
+    ]);
 
-    const users = await User.find({ classId: { $in: classIds } })
-      .sort({ rating: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select('name rating classId')
-      .populate('classId', 'name');
+    // Получаем общее количество школ (кроме школы пользователя)
+    const totalSchools = await User.aggregate([
+      {
+        $group: {
+          _id: "$schoolId"
+        }
+      },
+      {
+        $match: {
+          _id: { $ne: userSchoolId }
+        }
+      },
+      {
+        $count: "total"
+      }
+    ]);
 
-    const total = await User.countDocuments({ classId: { $in: classIds } });
+    const totalPages = Math.ceil((totalSchools[0]?.total || 0) / limit);
 
-    res.json({
-      school: school.name,
-      users,
+    return res.status(200).json({
+      userSchoolName : userSchoolRating[0].schoolName,
+      userSchoolRating : userSchoolRating[0].rating,
+      schools: otherSchoolsRatings,
       currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalUsers: total
+      totalPages
     });
+
   } catch (error) {
-    console.error('Error fetching school ratings:', error);
-    res.status(500).json({ message: 'Ошибка при получении рейтингов школы' });
+    console.error('Error getting school ratings:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 

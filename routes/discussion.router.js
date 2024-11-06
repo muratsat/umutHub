@@ -10,7 +10,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const User = require('../models/user.model');
+const UserModel = require('../models/user.model');
 
 
 
@@ -30,7 +30,7 @@ io.use( async (socket, next) => {
 
   try {
     const decoded = jwt.verify(token, 'secret');
-    const user = await User.findById(decoded.userId);
+    const user = await UserModel.findById(decoded.userId);
 
     socket.user = user;  
     next();
@@ -58,6 +58,41 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('join discussion', async (discussionId) => {
+    try {
+      socket.join(discussionId);
+      
+      // Получаем старые сообщения
+      const messageList = await Message.find({ discussionId })
+        .sort({ createdAt: 1 })
+        .lean(); // преобразуем в простой объект
+
+        const messages = await Promise.all(messageList.map(async (message) => {
+          var author=await UserModel.findById(message.author);
+          var schoolItem=await School.findById(author.schoolId).select('name');
+          
+          return {
+            message: message,
+            author: {
+              _id: author._id,
+              name: author.name,
+              imagePath: author.photo.path,
+              school : schoolItem.name
+            }
+          }
+
+
+      }));
+      
+      // Отправляем старые сообщения только присоединившемуся пользователю
+      socket.emit('load messages', messages);
+      
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      socket.emit('error', { message: 'Error loading messages' });
+    }
+  });
+
   socket.on('new message', async (data) => {
     const { discussionId, content } = data;
     const newMessage = new Message({
@@ -66,6 +101,7 @@ io.on('connection', (socket) => {
       author: socket.user._id
     });
     await newMessage.save();
+    console.log('message saved'+ newMessage);
     
     const imagePath = socket.user.photo.path;
     const school = await School.findById(socket.user.schoolId).select('name');
