@@ -9,7 +9,14 @@ const School = require('../models/school.model');
 const authMiddleware = require('../middlewares/authMiddleware');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server,{
+  path: '/socket/',
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 const UserModel = require('../models/user.model');
 
 
