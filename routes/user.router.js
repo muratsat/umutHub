@@ -133,7 +133,6 @@ router.get('/deleteAccount', authMiddleware.auth, async (req, res) => {
   try {
 
     // Проверяем существование пользователя
-    console.log(req.user);
 
     // Удаляем пользователя
     await UserModel.findByIdAndDelete(req.user._id);
